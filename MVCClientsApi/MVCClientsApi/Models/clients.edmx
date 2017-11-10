@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="clientsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Clients">
+          <Key>
+            <PropertyRef Name="IdentityNumber" />
+          </Key>
+          <Property Name="IdentityNumber" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="25" />
+          <Property Name="Firstname" Type="nvarchar" MaxLength="25" />
+          <Property Name="IdentityTypeId" Type="uniqueidentifier" />
+          <Property Name="DateOfBirth" Type="date" />
+        </EntityType>
+        <EntityType Name="IdentityTypes">
+          <Key>
+            <PropertyRef Name="IdentityTypeId" />
+          </Key>
+          <Property Name="IdentityTypeId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IdentityTypeDescription" Type="nvarchar" MaxLength="25" />
+        </EntityType>
+        <Association Name="FK__Clients__Identit__267ABA7A">
+          <End Role="IdentityTypes" Type="Self.IdentityTypes" Multiplicity="0..1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IdentityTypes">
+              <PropertyRef Name="IdentityTypeId" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="IdentityTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="clientsModelStoreContainer">
+          <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IdentityTypes" EntityType="Self.IdentityTypes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Clients__Identit__267ABA7A" Association="Self.FK__Clients__Identit__267ABA7A">
+            <End Role="IdentityTypes" EntitySet="IdentityTypes" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="clientsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="IdentityNumber" />
+          </Key>
+          <Property Name="IdentityNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+          <Property Name="Firstname" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+          <Property Name="IdentityTypeId" Type="Guid" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="IdentityType" Relationship="Self.FK__Clients__Identit__267ABA7A" FromRole="Clients" ToRole="IdentityTypes" />
+        </EntityType>
+        <EntityType Name="IdentityType">
+          <Key>
+            <PropertyRef Name="IdentityTypeId" />
+          </Key>
+          <Property Name="IdentityTypeId" Type="Guid" Nullable="false" />
+          <Property Name="IdentityTypeDescription" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Clients" Relationship="Self.FK__Clients__Identit__267ABA7A" FromRole="IdentityTypes" ToRole="Clients" />
+        </EntityType>
+        <Association Name="FK__Clients__Identit__267ABA7A">
+          <End Role="IdentityTypes" Type="Self.IdentityType" Multiplicity="0..1" />
+          <End Role="Clients" Type="Self.Client" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IdentityTypes">
+              <PropertyRef Name="IdentityTypeId" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="IdentityTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="clientsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Clients" EntityType="Self.Client" />
+          <EntitySet Name="IdentityTypes" EntityType="Self.IdentityType" />
+          <AssociationSet Name="FK__Clients__Identit__267ABA7A" Association="Self.FK__Clients__Identit__267ABA7A">
+            <End Role="IdentityTypes" EntitySet="IdentityTypes" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="clientsModelStoreContainer" CdmEntityContainer="clientsEntities">
+          <EntitySetMapping Name="Clients">
+            <EntityTypeMapping TypeName="clientsModel.Client">
+              <MappingFragment StoreEntitySet="Clients">
+                <ScalarProperty Name="IdentityNumber" ColumnName="IdentityNumber" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="IdentityTypeId" ColumnName="IdentityTypeId" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IdentityTypes">
+            <EntityTypeMapping TypeName="clientsModel.IdentityType">
+              <MappingFragment StoreEntitySet="IdentityTypes">
+                <ScalarProperty Name="IdentityTypeId" ColumnName="IdentityTypeId" />
+                <ScalarProperty Name="IdentityTypeDescription" ColumnName="IdentityTypeDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

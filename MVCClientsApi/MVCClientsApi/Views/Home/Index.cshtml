@@ -1,0 +1,153 @@
+﻿<div data-ng-app="clientApp" data-ng-controller="clientCTRL" class="panel panel-primary">
+    <div class="panel-heading">
+        <h4>Client Details</h4>
+    </div>
+    <div class="panel-body">
+        <div data-ng-show="msg.StatusCode==200&&msg.Message.length>0" class="alert alert-success">{{msg.Message}}</div>
+        <div data-ng-show="msg.StatusCode!=200&&msg.Message.length>0" class="alert alert-danger">{{msg.Message}}</div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Surname</th>
+                    <th>Firstname</th>
+                    <th>Identity Type</th>
+                    <th>Identity Number</th>
+                    <th>Date Of Birth</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="x in clientList">
+                    <td>{{x.Surname}}</td>
+                    <td>{{x.Firstname}}</td>
+                    <td>{{x.IdentityType.IdentityTypeDescription}}</td>
+                    <td>{{x.IdentityNumber}}</td>
+                    <td>{{x.DateOfBirth}}</td>
+                    <td><i style="cursor:pointer;font-size:20pt" class="glyphicon glyphicon-pencil" data-ng-click="pickClient($index);"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-heading"></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label>Surname</label>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <input type="text" class="form-control" data-ng-model="selectedClient.Surname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label>Firstname</label>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <input type="text" class="form-control" data-ng-model="selectedClient.Firstname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label>Identity Type</label>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <select class="form-control" data-ng-model="selectedItem" data-ng-options="ty as ty.IdentityTypeDescription for ty in identityTypes"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label>Identity Number</label>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <input type="text" class="form-control" data-ng-model="selectedClient.IdentityNumber" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label>Date Of Birth</label>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <input type="date" class="form-control" data-ng-model="selectedClient.DateOfBirth" date-field />
+            </div>
+            <div class="col-sm-12" style="text-align:right;">
+                <button class="btn btn-success" data-ng-click="updateClient();">Save</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    var app = angular.module('clientApp', []);
+    app.controller('clientCTRL', function ($scope, $http) {
+
+        $scope.msg = {
+            CustomMessage: '',
+            Message: '',
+            StatusCode: ''
+        };
+
+        $http({
+            method: "GET",
+            url: "../api/IdentityTypes"
+        }).then(function successCallback(response) {
+            $scope.identityTypes = response.data;
+        });
+
+        $scope.identityType = 0;
+
+        $scope.selectedClient = {
+            Surname: '',
+            Firstname: '',
+            IdentityType: {
+                IdentityTypeDescription: '',
+                IdentityTypeId: ''
+            },
+            IdentityNumber: '',
+            DateOfBirth: new Date(),
+            IdentityTypeId: ''
+        };
+
+        $scope.pickClient = function (ind) {
+            console.log(ind);
+            try {
+                $scope.selectedClient = $scope.clientList[ind];
+                $scope.selectedClient.DateOfBirth = new Date($scope.clientList[ind].DateOfBirth);
+            } catch (err) {
+                console.log(err.message);
+            }
+        };
+
+        $scope.updateClient = function () {
+            $scope.selectedClient.IdentityTypeId = $scope.selectedItem.IdentityTypeId;
+            var client = $scope.selectedClient;
+
+            try {
+                $http({
+                    method: 'PUT',
+                    url: '../api/Clients',
+                    data: client,
+                    dataType: 'json',
+                    header: { 'Content-Type': "application/json" }
+                }).then(function successCallback(response) {
+                    $scope.msg = response.data;
+                    getClients();
+                });
+            } catch (err) {
+                console.log(err.message);
+            }
+        };
+
+        function getClients() {
+            $http({
+                method: "GET",
+                url: "../api/Clients"
+            }).then(function successCallback(response) {
+                $scope.clientList = response.data;
+            });
+        };
+
+        getClients();
+        console.log("Page Loaded Successfully");
+    });
+
+</script>

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="clientsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Client">
+    <Key>
+      <PropertyRef Name="IdentityNumber" />
+    </Key>
+    <Property Name="IdentityNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Surname" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Firstname" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="IdentityTypeId" Type="Guid" />
+    <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="IdentityType" Relationship="Self.FK__Clients__Identit__267ABA7A" FromRole="Clients" ToRole="IdentityTypes" />
+  </EntityType>
+  <EntityType Name="IdentityType">
+    <Key>
+      <PropertyRef Name="IdentityTypeId" />
+    </Key>
+    <Property Name="IdentityTypeId" Type="Guid" Nullable="false" />
+    <Property Name="IdentityTypeDescription" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Clients" Relationship="Self.FK__Clients__Identit__267ABA7A" FromRole="IdentityTypes" ToRole="Clients" />
+  </EntityType>
+  <Association Name="FK__Clients__Identit__267ABA7A">
+    <End Role="IdentityTypes" Type="Self.IdentityType" Multiplicity="0..1" />
+    <End Role="Clients" Type="Self.Client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="IdentityTypes">
+        <PropertyRef Name="IdentityTypeId" />
+      </Principal>
+      <Dependent Role="Clients">
+        <PropertyRef Name="IdentityTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="clientsEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Clients" EntityType="Self.Client" />
+    <EntitySet Name="IdentityTypes" EntityType="Self.IdentityType" />
+    <AssociationSet Name="FK__Clients__Identit__267ABA7A" Association="Self.FK__Clients__Identit__267ABA7A">
+      <End Role="IdentityTypes" EntitySet="IdentityTypes" />
+      <End Role="Clients" EntitySet="Clients" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
